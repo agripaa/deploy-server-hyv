@@ -4,6 +4,7 @@
   "description": "",
   "main": "./api/index.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "nodemon ./api/index.js",
     "vercel-build": "echo hello"
   },

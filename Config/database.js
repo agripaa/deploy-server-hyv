@@ -1,12 +1,13 @@
 const { Sequelize } = require('sequelize');
+const mysql2 = require('mysql2');
 require('dotenv').config();
 
 const db = new Sequelize(process.env.DB_URL, {
     dialect: process.env.DATABASE,
-    dialectModule: "mysql2",
     dialectOptions: {
         ssl: JSON.parse(process.env.DB_SSL || '{"rejectUnauthorized":true}')
     },
+    dialectModule: mysql2
 });
 
 (async () => {
