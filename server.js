@@ -39,7 +39,7 @@ require('dotenv').config();
 const app = express();
 const sessionStore = new (sequelizeStore(session.Store))({ db: db });
 
-async function startDB(){await db.sync();};startDB();
+// async function startDB(){await db.sync();};startDB();
 
 app.use(session({ 
     secret: process.env.SESS,
@@ -61,7 +61,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(fileUpload());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
   return res.status(200).json({status: 200, msg: "server is running"});

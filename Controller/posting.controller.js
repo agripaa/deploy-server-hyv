@@ -3,7 +3,9 @@ const Posting = require('../Models/postingData.model.js');
 const db = require('../Config/database.js');
 const Users = require('../Models/usersData.model.js');
 const moment = require('moment');
+const { put } = require('@vercel/blob');
 const path = require('path');
+const { writeFileSync } = require('fs');
 
 const attributesUser = ['id', 'uuid', 'name', 'username', 'url', 'name_img'];
 
@@ -42,17 +44,6 @@ const getAllContent = async (req, res) => {
       return res.status(500).json({ status: 500, msg: 'Internal server error' });
     }
 };
-
-function generateRandomIndices(totalItems, count) {
-  const indices = [];
-  while (indices.length < count) {
-    const randomIndex = Math.floor(Math.random() * totalItems) + 1;
-    if (!indices.includes(randomIndex)) {
-      indices.push(randomIndex);
-    }
-  }
-  return indices;
-}
 
   const getPostUser = async(req, res) => {
     try {
@@ -163,13 +154,12 @@ const createNewPosting = async (req, res) => {
       const file = files.file;
       const size = file.data.length;
       const extend = path.extname(file.name);
-      const name_img = file.md5 + extend
-      const url = `${req.protocol}://${req.get("host")}/postings/${name_img}`;
+      const name_img = file.md5 + extend;
+      const url = `${req.protocol}://${req.headers.host}/postings/${name_img}`;
 
       if(size > 5000000) return res.status(422).json({status: 422, msg: "Images must be less than 5MB"})
-      file.mv(`./public/postings/${name_img}`, async(err) => {
-          if(err) return res.status(500).json({status: 500, msg: 'Internal server error', error: err});
-          
+      file.mv(path.join(`./postings`), async (err) => {
+        if(err) return res.status(500).json({status: 500, msg: 'Internal server error', image: "image hasn't been uploaded!" ,error: err});      
           try {
               const posting = await Posting.create({
                   name_img: name_img,
@@ -181,10 +171,10 @@ const createNewPosting = async (req, res) => {
               });
               const createdAt = moment(posting.createdAt).fromNow();
               return res.status(200).json({ status: 200, msg: 'Posting created successfully', createdAt });
-          } catch (error) {
-              console.error(error);
-              return res.status(500).json({ status: 500, msg: 'Internal server error' });
-          }
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({ status: 500, msg: 'Internal server error' });
+            }
       })
     }else{
       try {

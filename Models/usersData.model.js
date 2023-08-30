@@ -44,25 +44,19 @@ const Users = db.define('users_data', {
             isEmail: true
         }
     },
+    url: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    name_img : {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     password:{
         type: DataTypes.STRING,
         allowNull: true,
         validate: {
             notEmpty: false
-        }
-    },
-    name_img : {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-            notEmpty: false,
-        }
-    },
-    url : {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-            notEmpty: false,
         }
     },
     followerId: {
